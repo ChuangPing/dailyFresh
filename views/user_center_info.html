@@ -1,0 +1,46 @@
+
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+				<li><a href="/user/userCenterInfo" class="active">· 个人信息</a></li>
+				<li><a href="/user/userOrder">· 全部订单</a></li>
+				<li><a href="/user/userSite" >· 收货地址</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<div class="info_con clearfix">
+				<h3 class="common_title2">基本信息</h3>
+						<ul class="user_info_list">
+							{{if compare .address ""}}
+								<li><span style="color: brown">您当前没有默认地址，快去添加一个吧</span></li>
+							{{else}}
+							<li><span>用户名：</span>{{.address.Receiver}}</li>
+							<li><span>联系方式：</span>{{.address.Phone}}</li>
+								<li><span>联系地址：</span>{{.address.Addr}}</li>
+							{{end}}
+						</ul>
+				</div>
+				
+				<h3 class="common_title2">最近浏览</h3>
+				<div class="has_view_list">
+					<ul class="goods_type_list clearfix">
+				{{range .history_goods}}
+
+					<li>
+					<a href="/goodsDetail?id={{.ID}}"><img src="/static/{{.Image}}"></a>
+					<h4><a href="/goodsDetail?id={{.ID}}">{{.Name}}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{.Price}}</span>
+						<span class="unit">{{.Price}}/{{.Unite}}</span>
+						<a href="#" class="add_goods" title="加入购物车"></a>
+					</div>
+				</li>
+						{{end}}
+			</ul>
+		</div>
+		</div>
+	</div>
+
+
+

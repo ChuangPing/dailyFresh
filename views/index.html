@@ -1,0 +1,53 @@
+
+
+	<div class="center_con clearfix">
+		<ul class="subnav fl">
+			{{range .GoodsType}}
+				<li><a href="/goodsList?typeId={{.Id}}" class="{{.Logo}}">{{.Name}}</a></li>
+			{{end}}
+		</ul>
+		<div class="slide fl">
+			<ul class="slide_pics">
+				{{range .indexGoodsBanner}}
+					<li><img src="/static/{{.Image}}" alt="幻灯片"></li>
+				{{end}}
+			</ul>
+			<div class="prev"></div>
+			<div class="next"></div>
+			<ul class="points"></ul>
+		</div>
+		<div class="adv fl">
+			{{range .indexPromotionBanner}}
+				<a href="{{.Url}}"><img src="/static/{{.Image}}"></a>
+			{{end}}
+		</div>
+	</div>
+	{{range .goods}}
+		<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="model01">{{.type.Name}}</h3>
+			<div class="subtitle fl">
+				{{range .textGoods}}
+					<span>|</span>
+					<a href="/goodsDetail?id={{.GoodsSKU.ID}}">{{.GoodsSKU.Name}}</a>
+				{{end}}
+			</div>
+			<a href="#" class="goods_more fr" id="fruit_more">查看更多 ></a>
+		</div>
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="/static/{{.type.Image}}"></div>
+			<ul class="goods_list fl">
+				{{range .imgGoods}}
+					<li>
+						<h4><a href="/goodsDetail?id={{.GoodsSKU.ID}}">{{.GoodsSKU.Name}}</a></h4>
+						<a href="/goodsDetail?id={{.GoodsSKU.ID}}"><img src="/static/{{.GoodsSKU.Image}}"></a>
+						<div class="prize">¥ {{.GoodsSKU.Price}}</div>
+					</li>
+				{{end}}
+
+			</ul>
+		</div>
+	</div>
+	{{end}}
+

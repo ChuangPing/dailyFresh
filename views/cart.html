@@ -1,0 +1,275 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>天天生鲜-首页</title>
+	<link rel="stylesheet" type="text/css" href="/static/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/static/js/slide.js"></script>
+</head>
+<body>
+<div class="header_con">
+	<div class="header">
+		<div class="welcome fl">欢迎来到天天生鲜!</div>
+		<div class="fr">
+			{{if compare .username ""}}
+			<div class="login_btn fl">
+				<a href="/login">登录</a>
+				<span>|</span>
+				<a href="/register">注册</a>
+			</div>
+			{{else}}
+			<div class="login_btn fl">
+				欢迎您：<em>{{.username}}</em>
+				<span>|</span>
+				<a href="/user/loginOut">退出登录</a>
+			</div>
+			{{end}}
+		</div>
+
+		<div class="user_link fl">
+			<span>|</span>
+			<a href="/user/userCenterInfo">用户中心</a>
+			<span>|</span>
+			<a href="cart.html">我的购物车</a>
+			<span>|</span>
+			<a href="user_center_order.html">我的订单</a>
+		</div>
+	</div>
+</div>
+</div>
+	<div class="search_bar clearfix">
+		<a href="/index" class="logo fl"><img src="/static/images/logo.png"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;购物车</div>
+		<div class="search_con fr">
+			<form action="/search" method="post">
+				<input type="text" class="input_text fl" name="search" placeholder="搜索商品">
+				<input type="button" class="input_btn fr" name="" value="搜索">
+			</form>
+		</div>
+	</div>
+
+	<div class="total_count">全部商品<em>{{.cartGoodsCount}}</em>件</div>
+	<ul class="cart_list_th clearfix">
+		<li class="col01">商品名称</li>
+		<li class="col02">商品单位</li>
+		<li class="col03">商品价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+<form action="/user/showOrder" method="post">
+	{{range .goods}}
+		<ul class="cart_list_td clearfix">
+<!--			这里提交的是name为skuId的数据，由于form表单会自动提交选中的，因此没有选中的不会提交到服务器，服务器拿到的是skuId的切片（数组）-->
+			<li class="col01"><input type="checkbox" name="skuId" checked value="{{.goodsSKU.ID}}"></li>
+			<li class="col02"><img src="/static/{{.goodsSKU.Image}}"></li>
+			<li class="col03">{{.goodsSKU.Name}}<br><em>{{.goodsSKU.Price}}元/{{.goodsSKU.Unite}}</em></li>
+			<li class="col04">{{.goodsSKU.Unite}}</li>
+			<li class="col05">{{.goodsSKU.Price}}元</li>
+			<li class="col06">
+				<div class="num_add">
+					<a href="javascript:;" class="add fl">+</a>
+					<input type="text" class="num_show fl" value="{{.count}}" skuId="{{.goodsSKU.ID}}">
+					<a href="javascript:;" class="minus fl">-</a>
+				</div>
+			</li>
+			<li class="col07">{{.goodPrice}}元</li>
+			<li class="col08"><a href="javascript:;" class="delCart" skuId="{{.goodsSKU.ID}}">删除</a></li>
+		</ul>
+	{{end}}
+	
+
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="" checked=""></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em>{{.totalPrice}}</em><br>共计<b>{{.totalCount}}</b>件商品</li>
+		<li class="col04"><input type="submit" class="myStyle" value="去结算"></li>
+	</ul>
+</form>
+	<div class="footer">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>
+		</div>
+		<p>CopyRight © 2016 北京天天生鲜信息技术有限公司 All Rights Reserved</p>
+		<p>电话：010-****888    京ICP备*******8号</p>
+	</div>
+
+</body>
+<script type="text/javascript">
+// 根据选中的转态获取总价
+function updatePrice() {
+	totalCount = 0 // 商品的总数
+	totalPrice = 0 // 选中商品的总价
+	$(".cart_list_td").find(":checked").parents("ul").each(function () {
+		count = $(this).find(".num_show").val() // 获取每件商品的数量  -- 一般获取到的string不能进行计算，需要进行转换
+		price = $(this).find(".col07").text() // 获取每件商品的价格
+		count = parseInt(count)
+		price = parseFloat(price)
+		//将每一件商品的数量进行累加
+		totalCount += count
+		totalPrice += price
+	})
+//	将计算后的数据更新到页面 -- 因为这是根据是否选中进行计算的
+	$(".settlements").children(".col03").children("em").text(totalPrice)
+	$(".settlements").children(".col03").children("b").text(totalCount)
+}
+
+//设置全选全不选转态
+$(".settlements").find(":checkbox").change(function() {
+//	获取全选转态的checked值
+	checkedFlage = $(this).prop("checked")
+//	将checked的选中转态赋值给列表的checke
+	$(".cart_list_td").find(":checkbox").each(function() {
+		$(this).prop("checked", checkedFlage)
+	})
+//	全选状态发生变化，要更新通过是否选中来更新数量和价钱
+	updatePrice()
+})
+
+//根据单个商品的是否选中转态来更改全选转态，并且更新价钱数量  -- 当有一个商品没有选中则全选按钮不是选中状态
+$(".cart_list_td").find(":checkbox").change(function() {
+	//计算列表的长度 -- 具有选中功能的总数
+	checkBoxLen = $(".cart_list_td").find(":checkbox").length
+	//计算选中的列表长度
+	checkedLen = $(".cart_list_td").find(":checked").length
+	if (checkedLen == checkBoxLen) {
+		//说明全部都是选中的
+		$('.settlements').find(':checkbox').prop('checked',"checked")
+	} else {
+		// 不是选中状态
+		$(".settlements").find(":checked").prop("checked", "")
+	}
+	// 选中转态发生变化，调用根据选中状态更新商品数量和总价
+	updatePrice()
+})
+//增加商品数量 -- 更新添加购物车商品数量
+$(".add").click(function(event) {
+	event.stopPropagation()
+	//获取这个商品对应的数量
+	count = $(this).next().val() //input中
+	count = parseInt(count) + 1
+	skuId = $(this).next().attr("skuId")
+	var temp = $(this)
+	// 将需要通过ajax传递给后台的数据进行封装成json
+	param = {"skuId": skuId, "count": count}
+	$.post("/user/updateCartCount", param, function(data) {
+		if (data.code == 200) {
+			//	后端处理成功,将最新的展示到页面
+			temp.next().val(data.newCount)
+			price = temp.parents().siblings(".col05").text() // 获取每件商品的价格 - 单价，包含元，因为直接获取 text()
+			count = parseInt(data.newCount)
+			price = parseFloat(price) // 可以把上面获取的price中的元去掉
+			totalPrice = price * count
+			temp.parents().siblings(".col07").text(totalPrice) // 更新当前商品对应的总价： 数量 * 单价
+			// 更新最新的价钱
+			updatePrice()
+		} else {
+			alert(data.msg)
+		}
+	})
+})
+
+//减少商品数量-- 更新添加购物车商品的数量
+$(".minus").click(function() {
+	//获取对应商品的id -- 注意要根据触发点击事件的标签进行获取，因为标签是循环产生，不能获取到其它的或者全部的数据
+	skuId = $(this).siblings(".num_show").attr("skuId")
+	// 获取对应的商品的数量
+	skuCount = $(this).siblings(".num_show").val()
+	skuCount = parseInt(skuCount) // 拿到的值有可能是字符串，将其转换为整型方便计算
+	skuCount -= 1
+	if (1 > skuCount) {
+		skuCount = 1
+		$(this).siblings(".num_show").val(skuCount)
+		return
+	}
+	//封装Ajax需要的json数据
+	param = {"skuId": skuId, "count": skuCount}
+	temp = $(this) // 存储当前点击标签的位置
+	$.post("/user/updateCartCount", param, function(data) {
+		if (data.code == 200) {
+			//	后端处理成功,将最新的展示到页面
+			temp.siblings(".num_show").val(data.newCount)
+			price = temp.parents().siblings(".col05").text() // 获取每件商品的价格 - 单价，包含元，因为直接获取 text()
+			count = parseInt(data.newCount)
+			price = parseFloat(price) // 可以把上面获取的price中的元去掉
+			console.log(price, data.newCount)
+			totalPrice = price * count
+			temp.parents().siblings(".col07").text(totalPrice) // 更新当前商品对应的总价： 数量 * 单价
+			// 更新最新的价钱
+			updatePrice()
+		}else {
+			alert(data.msg)
+		}
+	})
+})
+
+//手动更新商品数量进行修改
+//1. 在输入框获得焦点前拿到输入框的初始值 -- 未修改前额值，为了当用户乱输入进行还原
+var preCount = 0 //定义成全局变量，因为下面还会使用
+$(".num_show").focus(function() {
+	preCount = $(this).val()
+})
+//失去焦点 -- 用户已经完成修改
+$(".num_show").blur(function() {
+	//拿到用户修改的值
+	 newCount = $(this).val()
+	//对值进行校验 -- 用户直接操作的数据都要进行合法性验证
+	if (newCount.trim().length == 0 || isNaN(newCount) || parseInt(newCount) < 0) {
+		//用户输入的数据不满足要求
+		$(this).val(preCount)
+		alert("请您正确输入")
+		return
+	}
+	skuId = $(this).attr("skuId")
+	//准备Ajax需要的json数据
+	param = {"skuId": skuId, "count": newCount}
+	temp = $(this) //暂存修改位置
+	$.post("/user/updateCartCount", param, function(data) {
+		if (data.code == 200) {
+			//	后端处理成功,将最新的展示到页面
+			temp.val(data.newCount)
+			price = temp.parents().siblings(".col05").text() // 获取每件商品的价格 - 单价，包含元，因为直接获取 text()
+			count = parseInt(data.newCount)
+			price = parseFloat(price) // 可以把上面获取的price中的元去掉
+			console.log(price, data.newCount)
+			totalPrice = price * count
+			temp.parents().siblings(".col07").text(totalPrice) // 更新当前商品对应的总价： 数量 * 单价
+			// 更新最新的价钱
+			updatePrice()
+		}else {
+			alert(data.msg)
+		}
+	})
+})
+
+//删除购物车商品
+// 由于这里由于删除按钮是a标签，因此可以通过链接在服务端处理业务，删除完成后在重定向到显示购物车页面（--重新执行一次查询购物车函数），这样页面会跳转刷新影响体验，改成前后端分离的方式，不刷新页面
+$(".delCart").click(function() {
+	// 获取数据 -- 要删除商品的Id
+	skuId = $(this).attr("skuId")
+	// 准备Ajax需要的json数据
+	param = {"skuId": skuId}
+	temp = $(this)
+	$.post("/user/deleteCartGoods", param, function(data) {
+		if (data.code == 200) {
+			//删除成功后移除对应的标签
+			temp.parents('ul').remove()
+			alert(data.msg)
+
+		}else {
+			alert(data.msg)
+		}
+	})
+})
+</script>
+
+</html>

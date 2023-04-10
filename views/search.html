@@ -1,0 +1,29 @@
+
+<div class="breadcrumb">
+    <a href="#">全部分类</a>
+    <span>></span>
+    <a href="#">新鲜水果</a>
+</div>
+
+<div class="main_wrap clearfix">
+    <div class="r_wrap fr clearfix">
+
+
+        <ul class="goods_type_list clearfix">
+            {{range .goods}}
+            <li>
+                <a href="/goodsDetail?id={.ID}"><img src="/static/{{.Image}}"></a>
+                <h4><a href="/goodsDetail?id={{.ID}}">{{.Name}}</a></h4>
+                <div class="operate">
+                    <span class="prize">￥{{.Price}}</span>
+                    <span class="unit">{{.Price}}/{{.Unite}}</span>
+                    <a href="#" class="add_goods" title="加入购物车"></a>
+                </div>
+            </li>
+            {{end}}
+
+        </ul>
+
+
+    </div>
+</div>
